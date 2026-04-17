@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DECISION POINT – Il caso Energiton</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Segoe UI,Tahoma,sans-serif;background:#eef1f8;color:#002855;height:100vh;overflow:hidden}
+.header{position:sticky;top:0;background:#002855;color:#ffffff;padding:10px 16px;font-weight:600;z-index:10}
+.app{max-width:1100px;margin:0 auto;padding:16px;height:calc(100vh - 48px);display:flex;flex-direction:column}
+.screen{display:none;flex:1}
+.screen.show{display:flex;flex-direction:column}
+.intro{justify-content:center;text-align:center}
+.intro h1{font-size:28px;margin-bottom:6px}
+.intro h2{font-size:16px;font-weight:400;margin-bottom:16px}
+.rules{background:#ffffff;padding:18px;border-radius:14px;margin-bottom:20px;line-height:1.6;text-align:left;font-size:15px}
+.btn{border:none;border-radius:24px;padding:12px 28px;font-size:15px;font-weight:600;cursor:pointer}
+.btn-primary{background:#002855;color:#ffffff}
+.btn-secondary{background:#ffffff;color:#002855;border:2px solid #002855}
+.btn-primary:disabled{opacity:.4}
+.progress{height:6px;background:#ffffff;border-radius:4px;overflow:hidden;margin-bottom:10px}
+.progress-fill{height:100%;width:0%;background:#cce97f}
+.counter{font-size:13px;margin-bottom:6px}
+.scenario-title{font-size:20px;margin-bottom:6px}
+.scenario-text{background:#ffffff;border:2px solid #cce97f;padding:14px;border-radius:14px;margin-bottom:12px;line-height:1.6;font-size:15px}
+.options{display:flex;flex-direction:column;gap:10px;flex:1;justify-content:center}
+.option{background:#ffffff;border:2px solid #eef1f8;border-radius:14px;padding:14px;cursor:pointer;line-height:1.4;font-size:15px}
+.option.selected{border-color:#002855;background:#cce97f}
+.nav{margin-top:12px;display:flex;justify-content:space-between;gap:12px}
+.results-box{background:#ffffff;padding:24px;border-radius:18px;flex:1;display:flex;flex-direction:column;justify-content:center}
+.scores{display:flex;gap:16px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.score{background:#002855;color:#ffffff;padding:14px;border-radius:14px;min-width:160px;text-align:center}
+.profile-text{line-height:1.6;font-size:15px}
+@media(max-width:768px){body{overflow:auto}.header{position:static}.app{height:auto}.btn{width:100%}.nav{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="header">PRAXI – DECISION POINT</div>
+<div class="app">
+
+<div class="screen intro show" id="intro">
+<h1>DECISION POINT</h1>
+<h2>Il caso Energiton</h2>
+<div class="rules">
+<strong>1975. Crisi petrolifera.</strong> I prezzi del petrolio esplodono, la pressione politica cresce e i giornali titolano ogni giorno sul rischio di recessione.<br><br>
+Siete nella stanza dei bottoni della <strong>Energiton</strong>, la maggiore compagnia petrolifera francese. Siete un Dirigente della società e dovete valutare nuove tecnologie e decidere rapidamente quale strada intraprendere.<br><br>
+Ogni vostra scelta influenzerà due fattori:<br>
+<strong>Efficacia</strong>: la capacità di raggiungere il risultato atteso.<br>
+<strong>Efficienza</strong>: la rapidità nel decidere, senza paralisi da analisi o spreco di risorse.
+</div>
+<button class="btn btn-primary" onclick="startQuiz()">Inizia</button>
+</div>
+
+<div class="screen" id="quiz">
+<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+<div id="scenario"></div>
+<div class="nav">
+<button class="btn btn-secondary" onclick="prev()">Indietro</button>
+<button class="btn btn-primary" id="nextBtn" onclick="next()" disabled>Avanti</button>
+</div>
+</div>
+
+<div class="screen" id="results">
+<div class="results-box">
+<h2 style="text-align:center;margin-bottom:16px">Il tuo profilo decisionale</h2>
+<div class="scores">
+<div class="score">Efficacia<br><strong id="eff1">0</strong></div>
+<div class="score">Efficienza<br><strong id="eff2">0</strong></div>
+</div>
+<div class="profile-text" id="profile"></div>
+<br>
+<button class="btn btn-primary" onclick="restart()">Riprova</button>
+</div>
+</div>
+
+</div>
+<script>
+const data = [
+{
+ title:"L'invenzione miracolosa",
+ text:"Avete una riunione con due inventori. Non hanno esperienza nel settore, ma affermano di aver creato un metodo unico al mondo: un aereo che può individuare giacimenti petroliferi dal cielo. Portano con sé mappe dettagliate e parlano con entusiasmo, facendo leva sul bisogno urgente di soluzioni per uscire dalla crisi.",
+ options:[
+  {t:"Mi fido e avvio un test pilota: guadagno tempo.",a:-30,b:20},
+  {t:"Chiedo prove tecniche e verifiche indipendenti, a costo di allungare i tempi.",a:30,b:-20},
+  {t:"Accolgo la proposta solo come ipotesi, in attesa di ulteriori evidenze.",a:10,b:10}
+ ]
+},
+{
+ title:"La dimostrazione privata",
+ text:"Gli inventori organizzano una prova in un hangar a Tolosa. L’aereo usato è modesto, ma spiegano che il valore è nella strumentazione. Durante il volo, il monitor mostra mappe coerenti con giacimenti noti. Gli inventori commentano: “Ecco la prova che il sistema funziona”. Un tecnico Energiton, a bassa voce, osserva che i dati potrebbero avere altre spiegazioni, ma non fornisce altre obiezioni.",
+ options:[
+  {t:"Considero la dimostrazione convincente: i dati coincidono con la realtà, e questo basta per procedere.",a:-30,b:25},
+  {t:"Mi mostro interessato, ma chiedo altre prove comparative in zone meno conosciute.",a:30,b:-20},
+  {t:"Mi complimento con gli inventori e suggerisco di avviare una fase sperimentale limitata, così da non perdere tempo.",a:10,b:5}
+ ]
+},
+{
+ title:"La pressione politica",
+ text:"Dopo Tolosa arriva una telefonata da Parigi: “Il Paese ha bisogno di fiducia. Mostrate che ci stiamo muovendo”. Alcuni colleghi ti dicono: “Se aspettiamo troppo, perderemo l’occasione di fare la prima mossa”. Il Ministero propone di annunciare pubblicamente che la Energiton sta sperimentando la nuova tecnologia. Come ti muovi?",
+ options:[
+  {t:"Accetto: un annuncio rapido rafforzerebbe la nostra immagine di innovatori.",a:-30,b:25},
+  {t:"Suggerisco un comunicato generico, che parli di valutazioni in corso.",a:5,b:10},
+  {t:"Chiedo di rimandare: senza dati verificati al 100% rischiamo di bruciarci la reputazione.",a:30,b:-20}
+ ]
+},
+{
+ title:"Il budget in gioco",
+ text:"Il CFO ti mostra i numeri: trivellazioni e prospezioni hanno già superato le previsioni di spesa. “Se questa tecnologia funziona, riduciamo costi enormi. Ma se aspettiamo, qualcun altro ci passerà avanti”. Gli inventori intanto chiedono un finanziamento iniziale di 50 milioni di franchi. Quale strada prendi?",
+ options:[
+  {t:"Approvo l’investimento: il rischio è alto, ma siamo tutti d'accordo che funzionerà.",a:-30,b:25},
+  {t:"Propongo un finanziamento iniziale di 10 milioni di franchi, valutando i futuri in base al risultato.",a:5,b:10},
+  {t:"Rimando la decisione: non è il momento di autorizzare fondi.",a:30,b:-20}
+ ]
+},
+{
+ title:"Sala riunioni",
+ text:"In sala riunioni tutti i dirigenti sono entusiasti. La Francia farà da apristrada a questa invenzione rivoluzionaria. A te sembra ancora tutto troppo bello per essere vero... Cosa fai?",
+ options:[
+  {t:"Mi allineo al pensiero di gruppo, per non andare controcorrente.",a:-25,b:15},
+  {t:"Espongo apertamente i miei dubbi, a costo di dover discutere con tutti.",a:30,b:-20},
+  {t:"Cerco di capire se qualcun altro la pensa come me, ed è pronto a parlarne.",a:10,b:10}
+ ]
+}
+];
+let i=0,s1=0,s2=0,sel=null,opts=[],history=[];
+function startQuiz(){intro.classList.remove('show');quiz.classList.add('show');render();}
+function render(){const s=data[i];opts=[...s.options].sort(()=>Math.random()-.5);scenario.innerHTML=`<div class='counter'>Scenario ${i+1} di ${data.length}</div><div class='scenario-title'>${s.title}</div><div class='scenario-text'>${s.text}</div><div class='options'>${opts.map((o,idx)=>`<div class='option' onclick='selectOpt(${idx})'>${o.t}</div>`).join('')}</div>`;progressFill.style.width=(i/data.length*100)+'%';sel=null;nextBtn.disabled=true;}
+function selectOpt(idx){document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));document.querySelectorAll('.option')[idx].classList.add('selected');sel=idx;nextBtn.disabled=false;history[i]={idx,opts};setTimeout(next,300)}
+function next(){if(sel==null)return;s1+=opts[sel].a;s2+=opts[sel].b;i++;if(i<data.length){render()}else showResults()}
+function prev(){if(i===0)return;i--;const h=history[i];s1-=h.opts[h.idx].a;s2-=h.opts[h.idx].b;render()}
+function showResults(){quiz.classList.remove('show');results.classList.add('show');eff1.textContent=s1;eff2.textContent=s2;let p='';if(s1-s2>=30){p='<strong>Pensatore riflessivo</strong><br><br>Privilegi l’accuratezza rispetto alla rapidità. Valuti alternative, consideri gli impatti della decisione e individui delle connessioni che spesso sfuggono. Tendi a rimandare l’azione finché non hai raccolto abbastanza elementi per sentirti sicuro della scelta. Questo ti rende affidabile e razionale, ma può diventare un limite nei contesti in cui servono velocità e adattamento. A volte, attendere “la decisione perfetta” rischia di far perdere opportunità. Accettare un margine d’incertezza può rendere le tue scelte più tempestive e allineate al contesto.'}
+else if(s2-s1>=30){p='<strong>Esecutore rapido</strong><br><br>Hai uno stile decisionale orientato all’azione. Quando si presenta un problema, ti muovi subito: preferisci sperimentare e correggere in corsa piuttosto che restare bloccato nell’analisi. La tua forza è la prontezza: sai scegliere rapidamente e far avanzare i processi anche in situazioni di incertezza o pressione temporale. Tuttavia, questa spinta all’efficienza può portartare a decisioni inefficaci sul lungo termine. Prima di decidere, chiediti se hai davvero tutti i dati necessari.'}
+else{p='<strong>Decisore bilanciato</strong><br><br>Riesci a mantenere un buon equilibrio tra efficacia e efficienza. Sai quando accelerare e quando fermarti a riflettere, adattando il tuo stile decisionale al contesto. Mantieni questa capacità di adattamento, ma allenati a riconoscere i segnali che ti dicono quando spingere più sull’analisi o più sulla rapidità.'}
+profile.innerHTML=p}
+function restart(){i=0;s1=0;s2=0;history=[];results.classList.remove('show');intro.classList.add('show')}
+</script>
+</body>
+</html>
